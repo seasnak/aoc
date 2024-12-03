@@ -1,6 +1,5 @@
 use std::fs;
 
-const DAY: &str = "01";
 const INPUT_FILE: &str = "input/y24/d01.txt";
 
 fn part_one() -> std::io::Result<u32> {
@@ -30,42 +29,31 @@ fn part_two() -> std::io::Result<usize> {
     let content = binding.trim();
     let conts = content.split("\n").collect::<Vec<&str>>();
     
-    let (mut a, mut b) = (Vec::<i32>::with_capacity(conts.len()), Vec::<i32>::with_capacity(conts.len()));
+    //let (mut a, mut b) = (Vec::<i32>::with_capacity(conts.len()), Vec::<i32>::with_capacity(conts.len()));
+    //for line in conts {
+    //    let pos = line.chars().position(|x| x == ' ').unwrap();
+    //    a.push((&line[0..pos]).parse().unwrap());
+    //    b.push((&line[pos..]).parse().unwrap());
+    //}
+    
+    let mut a = Vec::<usize>::with_capacity(conts.len());
+    let mut b = [0; 100000]; // all values are 5 digits
+    
     for line in conts {
         let pos = line.chars().position(|x| x == ' ').unwrap();
         a.push((&line[0..pos]).parse().unwrap());
-        b.push((&line[pos..]).parse().unwrap());
+        b[line[pos..].trim().parse::<usize>().unwrap()] += 1;
     }
 
-    a.sort();
-    b.sort();
-    
-    //let out = a.iter().map(|i| b[i] * i).sum::<usize>();
-    Ok(0)
+    let out = a.into_iter().map(|i| b[i] * i).sum::<usize>();
+    Ok(out)
 }
 
 pub fn solve(part:i32) {
-    if part == 1 {
-        println!("=== PART 1 ===");
-        let result = part_one();
-        let output = match result {
-            Ok(out) => out,
-            Err(e) => panic!("Error: {e}"),
-        };
-        println!("{}", output);
-        
-    }
-    else {
-        //println!("=== PART 2 ===");
-        //let f = File::open(INPUT_FILE)?;
-        //println!("{}", part_two(BufReader::new(f)));
+    println!("=== PART {} ===", part);
+    match part {
+        1 => println!("{}", part_one().unwrap()),
+        2 => println!("{}", part_two().unwrap()),
+        _ => panic!("Unknown Part")
     }
 }
-
-//fn main() {
-//    let args: Vec<String> = env::args().collect();
-//    assert_eq!(args.len(), 2);
-//
-//    solve(args[1].as_str().parse().unwrap());
-//
-//}

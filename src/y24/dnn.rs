@@ -1,6 +1,6 @@
 use std::fs;
 
-const INPUT_FILE: &str = "input/y24/d02.txt";
+const INPUT_FILE: &str = "input/y24/dnn.txt";
 
 fn part_one() -> std::io::Result<u32> {
 
