@@ -1,40 +1,65 @@
-//use std::io;
-//use std::env;
-//use std::fs;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::fs;
 
 const DAY: &str = "01";
 const INPUT_FILE: &str = "input/y24/d01.txt";
 
-fn part_one(reader:BufReader<File>) -> std::io::Result<uszie> {
-    let answer = 0;
-    let content = reader.lines().flatten();
-        
-    Ok(answer)
+fn part_one() -> std::io::Result<u32> {
+    
+    let binding = fs::read_to_string(INPUT_FILE).expect("File Read Error");
+    let content = binding.trim();
+    let conts = content.split("\n").collect::<Vec<&str>>();
 
+    let (mut a, mut b) = (Vec::<i32>::with_capacity(conts.len()), Vec::<i32>::with_capacity(conts.len()));
+    for line in conts {
+        let pos = line.chars().position(|x| x == ' ').unwrap();
+        a.push((&line[0..pos]).parse().unwrap());
+        b.push((&line[pos..].trim()).parse().unwrap());
+    }
+
+    a.sort();
+    b.sort();
+    //dbg!("{}, {}", a, b);
+    
+    let out = a.iter().zip(b).map(|(a, b)| a.abs_diff(b)).sum::<u32>();
+    Ok(out)
 }
 
-//fn part_two(reader:BufReader<File>) -> Result<usize> {
-//    let answer = 0;
-//    let content = reader.lines().flatten();
-//    Ok(answer)
-//}
+fn part_two() -> std::io::Result<usize> {
+    
+    let binding = fs::read_to_string(INPUT_FILE).expect("File Read Error"); 
+    let content = binding.trim();
+    let conts = content.split("\n").collect::<Vec<&str>>();
+    
+    let (mut a, mut b) = (Vec::<i32>::with_capacity(conts.len()), Vec::<i32>::with_capacity(conts.len()));
+    for line in conts {
+        let pos = line.chars().position(|x| x == ' ').unwrap();
+        a.push((&line[0..pos]).parse().unwrap());
+        b.push((&line[pos..]).parse().unwrap());
+    }
 
-pub fn solve(part:i32=1) -> std::io::Result<()> {
+    a.sort();
+    b.sort();
+    
+    //let out = a.iter().map(|i| b[i] * i).sum::<usize>();
+    Ok(0)
+}
+
+pub fn solve(part:i32) {
     if part == 1 {
         println!("=== PART 1 ===");
-        let f = File::open(INPUT_FILE)?;
-        let mut buf = BufReader::new(f);
-        println!("{}", part_one(buf));
+        let result = part_one();
+        let output = match result {
+            Ok(out) => out,
+            Err(e) => panic!("Error: {e}"),
+        };
+        println!("{}", output);
+        
     }
     else {
         //println!("=== PART 2 ===");
         //let f = File::open(INPUT_FILE)?;
         //println!("{}", part_two(BufReader::new(f)));
     }
-
-    Ok(())    
 }
 
 //fn main() {
