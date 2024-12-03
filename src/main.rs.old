@@ -1,6 +1,8 @@
-use crate::d01;
+mod y24;
 
-use std::env;
+use crate::y24::d01;
+//use std::io;
+//use std::env;
 
 const YEAR:i32 = 2024; 
 
