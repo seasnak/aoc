@@ -74,7 +74,8 @@ fn part_two() -> std::io::Result<u32> {
             if level_diff > 0 { net_change += 1; num_asc += 1; }
             else if level_diff < 0 { net_change -= 1; num_desc += 1; }
         }
-        println!("{}, {}", rep_vec, num_safe);
+        println!("{}", net_change);
+        //println!("{}, {}", rep_vec, num_safe);
     }
 
     Ok(num_safe)

@@ -3,31 +3,35 @@ use regex::Regex;
 
 const INPUT_FILE: &str = "input/y24/d03.txt";
 
-fn part_one() -> std::io::Result<i32> {
-    let re = Regex::new(r"mul\((?<a>)[0-9]{0,3},(?<b>)[0-9]{0,3}\)").unwrap();
+fn part_one() -> std::io::Result<u32> {
+    let re = Regex::new(r"mul\((?<a>\d{1,3}),(?<b>\d{1,3})\)").unwrap();
 
     let binding = fs::read_to_string(INPUT_FILE).expect("Failed to read input file");
-    //let mults = re.captures(&binding).map_or("", |m| &(m["a"].parse::<i32>().unwrap() * m["b"].parse::<i32>().unwrap()).to_string());
-    let mults_str = re.captures(&binding);
-    let mults = mults_str.iter();
-
-
-    let mut tot_sum: i32 = 0;
-    //for mult in mults.split(' ') {
-        //tot_sum += mult.parse().unwrap();
-    //}
-    for mult in mults {
-        let val_a = mult["a"].parse::<i32>().unwrap();
-        let val_b = mult["b"].parse::<i32>().unwrap();
-        tot_sum += val_a * val_b;
-    }
     
-    Ok(0)
+    let mult_capts = re.captures_iter(&binding.trim()); // regex to capture all strings mul(a,b)
+    let mults = mult_capts.map(|m| m["a"].parse::<i32>().unwrap() * m["b"].parse::<i32>().unwrap());
+    let tot_sum: i32 = mults.sum();
+    
+    Ok(tot_sum as u32)
 }
 
 fn part_two() -> std::io::Result<u32> {
+    let binding = fs::read_to_string(INPUT_FILE).expect("Failed to read input file");
 
-    Ok(0)
+    let re_inactive = Regex::new(r"don't\(\).*?do\(\)").unwrap();
+    let re_inactive_end = Regex::new(r"don't\(\).*").unwrap();
+    let re_mults = Regex::new(r"mul\((?<a>\d{1,3}),(?<b>\d{1,3})\)").unwrap(); 
+    let re_nl = Regex::new(r"\n").unwrap();
+
+    let binding_compact = re_nl.replace_all(&binding, "");
+    let binding_no_inactive = re_inactive.replace_all(&binding_compact, "");
+    let binding_clean = re_inactive_end.replace(&binding_no_inactive, "");
+
+    let active_capts = re_mults.captures_iter(&binding_clean); // regex to capture all strings mul(a,b) 
+    let mults = active_capts.map(|m| m["a"].parse::<i32>().unwrap() * m["b"].parse::<i32>().unwrap());
+    let tot_sum: i32 = mults.sum();
+
+    Ok(tot_sum as u32)
 }
 
 pub fn solve(part:i32) {
