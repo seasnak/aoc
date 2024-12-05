@@ -16,6 +16,7 @@ fn main() {
     match day_num {
         1 => d01::solve(part),
         2 => d02::solve(part),
+        3 => d03::solve(part),
         _ => panic!("Unknown day {}", day_num),
     }
 
