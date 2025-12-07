@@ -23,40 +23,44 @@ unsigned long getInvalidIDTotalFromRange(const IDRange idr)
     unsigned long total {0};
 
     // case: can't form repeated string from an odd number of characters
-    if (idr.start.length() %2 != 0 && idr.end.length() == idr.start.length()) return 0;
-    else if (idr.end.length() == 1) return 0;
+    // if (idr.end.length() == 1) return 0;
 
-    std::cout << "start: " << idr.start << " end: " << idr.end << std::endl;
+    // std::cout << "start: " << idr.start << " end: " << idr.end << std::endl;
 
     unsigned long start_i = std::stoul(idr.start);
     unsigned long end_i = std::stoul(idr.end);
 
     std::string start_half {"0"};
-    if( idr.start.length() != 1)
-    {
-        start_half = idr.start.substr(0, idr.start.length() / 2);
-    }
-    std::string end_half { idr.end.substr(0, idr.end.length() / 2) };
+    if( idr.start.length() %2 == 0) start_half = idr.start.substr(0, idr.start.length() / 2);
+    else start_half = idr.start.substr(0, idr.start.length() / 2 + 1);
+
+    std::string end_half {""};
+    if (idr.end.length() % 2 == 0) end_half = idr.end.substr(0, idr.end.length() / 2);
+    else end_half = idr.end.substr(0, idr.end.length() / 2 + 1);
 
     unsigned long start_half_i { std::stoul(start_half) };
     unsigned long end_half_i { std::stoul(end_half) };
 
+    // std::cout << "start half: " << start_half << " end half: " << end_half << std::endl;
+
     for(unsigned long i {start_half_i}; i <= end_half_i; i++)
     {
         std::string current_id = std::to_string(i) + std::to_string(i);
-        std::cout << "current id: " << current_id << std::endl;
+        // std::cout << "current id: " << current_id << std::endl;
         unsigned long current_id_i = std::stoul(current_id);
 
         if (current_id_i > start_i && current_id_i < end_i)
         {
+            // std::cout << "found id: " << current_id_i << std::endl;
             total += current_id_i;
         }
     }
-    
+
+    // std::cout << "total: " << total <<  std::endl;
     return total;    
 }
 
-int getInvalidIDTotal(const std::string& input_fname)
+unsigned long getInvalidIDTotal(const std::string& input_fname)
 {
     std::string content = readFileToString(input_fname);
 
@@ -79,11 +83,10 @@ int getInvalidIDTotal(const std::string& input_fname)
 
             total += getInvalidIDTotalFromRange(id_range);
         }
-        
-
+        std::cout << "range: " << token << " running total: " << total << std::endl;
     }
 
-    return total; 
+    return total;
 }
 
 int main() {
