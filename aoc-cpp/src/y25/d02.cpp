@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 #include <stdlib.h>
 
@@ -23,20 +24,22 @@ unsigned long getInvalidIDTotalFromRange(const IDRange idr)
     unsigned long total {0};
 
     // case: can't form repeated string from an odd number of characters
-    // if (idr.end.length() == 1) return 0;
+    if (idr.start.length() % 2 != 0 && idr.start.length() == idr.end.length()) return 0;
+    if (idr.end.length() == 1) return 0;
 
-    // std::cout << "start: " << idr.start << " end: " << idr.end << std::endl;
+    std::cout << "start: " << idr.start << " end: " << idr.end << std::endl;
 
     unsigned long start_i = std::stoul(idr.start);
     unsigned long end_i = std::stoul(idr.end);
 
-    std::string start_half {"0"};
-    if( idr.start.length() %2 == 0) start_half = idr.start.substr(0, idr.start.length() / 2);
-    else start_half = idr.start.substr(0, idr.start.length() / 2 + 1);
+    std::string start_half {""};
+    if ( idr.start.length() == 1 ) start_half = "0";
+    else if( idr.start.length() %2 == 0) start_half = idr.start.substr(0, idr.start.length() / 2);
+    else start_half = idr.start.substr(0, (idr.start.length() / 2));
 
     std::string end_half {""};
     if (idr.end.length() % 2 == 0) end_half = idr.end.substr(0, idr.end.length() / 2);
-    else end_half = idr.end.substr(0, idr.end.length() / 2 + 1);
+    else end_half = idr.end.substr(0, (idr.end.length() / 2) + 1);
 
     unsigned long start_half_i { std::stoul(start_half) };
     unsigned long end_half_i { std::stoul(end_half) };
@@ -49,7 +52,7 @@ unsigned long getInvalidIDTotalFromRange(const IDRange idr)
         // std::cout << "current id: " << current_id << std::endl;
         unsigned long current_id_i = std::stoul(current_id);
 
-        if (current_id_i > start_i && current_id_i < end_i)
+        if (current_id_i >= start_i && current_id_i <= end_i)
         {
             // std::cout << "found id: " << current_id_i << std::endl;
             total += current_id_i;
@@ -57,10 +60,38 @@ unsigned long getInvalidIDTotalFromRange(const IDRange idr)
     }
 
     // std::cout << "total: " << total <<  std::endl;
-    return total;    
+    return total;
 }
 
-unsigned long getInvalidIDTotal(const std::string& input_fname)
+bool is_repeated(std::string input, int num_repeats)
+{ 
+    if (input.length() % num_repeats != 0) return false;
+
+    int portion_size {input / num_repeats};
+    std::string input_portion = input.substr(0, portion_size);
+    for (int i = 1; i < num_repeats; i++)
+    {
+        if( input.substr(portion_size * i, portion_size) != input_portion ) return false;
+    }
+
+    return true;
+}
+
+unsigned long getTrueInvalidIDTotalFromRange(const IDRange idr)
+{
+    unsigned long total {0};
+
+    int start_split_size_cap = idr.start.length() / 2;
+    int end_split_size_cap = idr.start.length() / 2;
+
+    
+
+    return true;
+
+    return total;
+}
+
+unsigned long getInvalidIDTotal(const std::string& input_fname, int part)
 {
     std::string content = readFileToString(input_fname);
 
@@ -81,9 +112,10 @@ unsigned long getInvalidIDTotal(const std::string& input_fname)
             std::getline(id_ss, id_range.end);
             // std::cout << "start: " << id_range.start << " end: " << id_range.end << std::endl;
 
-            total += getInvalidIDTotalFromRange(id_range);
+            if (part == 1) total += getInvalidIDTotalFromRange(id_range);
+            else if (part == 2) total += getTrueInvalidIDTotalFromRange(id_range);
         }
-        std::cout << "range: " << token << " running total: " << total << std::endl;
+        // std::cout << "running total: " << total << std::endl;
     }
 
     return total;
@@ -91,12 +123,13 @@ unsigned long getInvalidIDTotal(const std::string& input_fname)
 
 int main() {
 
-    std::string input_fname {"../../data/y25/d02.txt"};
+    std::string input_fname {"../../data/y25/d02-ex.txt"};
 
     // PART ONE
-    std::cout << getInvalidIDTotal(input_fname) << std::endl;
+    // std::cout << getInvalidIDTotal(input_fname, 1) << std::endl;
 
     // PART TWO
+    std::cout << getInvalidIDTotal(input_fname, 2) << std::endl;
 
     return EXIT_SUCCESS;
 }
