@@ -34,11 +34,10 @@ RotationAction rotate_dial_count_clicks(int start, std::string input)
 
     RotationAction output;
     output.finish = start;
-    output.clicks = 0;
     
     if (input[0] == 'L')
     {
-        output.finish = (output.finish - num_rotations) % 100;
+        output.finish = output.finish - (num_rotations % 100);
         output.clicks = num_rotations / 100;
         
         if (output.finish < 0) {
@@ -55,10 +54,8 @@ RotationAction rotate_dial_count_clicks(int start, std::string input)
     {
         // output.finish = (output.finish + num_rotations);
         output.finish += num_rotations;
-        output.clicks += output.finish / 100;
+        output.clicks += std::floor(output.finish / 100);
         output.finish = output.finish % 100;
-
-        // if (start == 0) output.clicks --;
     }
     
     return output; 
@@ -79,28 +76,23 @@ int get_password(int start, std::string inputs_filename, int part)
         while (getline(inputs_fs, line))
         {
             if (line.empty()) continue;
-            // std::cout << finish << " -> " << line;
             start_tmp = finish;
             output = rotate_dial_count_clicks(finish, line);
             finish = output.finish;
-            // std::cout << " = " << finish;
 
-            if (finish == 0) 
-            {
-                // output.clicks++;
-            }
-
-            if (line[0] == 'R' && output.clicks == 1)
+            if (output.clicks >= 0)
             {
                 std::cout << start_tmp << " -> " << line << " = " << finish << " --- " << output.clicks << std::endl;
             }
             password += output.clicks;
-
         }
 
         inputs_fs.close();
     }
-    else std::cout << "Unable to open file" << std::endl;
+    else 
+    {
+        std::cout << "Unable to open file" << std::endl;
+    }
     
     return password;
 }
