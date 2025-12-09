@@ -87,37 +87,49 @@ unsigned long getNInvalidIDSubtotal(const IDRange idr, int split_size)
     }
 
     std::string start_substr {};
-    if (idr.start.length() % split_size == 0) start_substr = idr.start.substr(0, split_size);
+    if (idr.start.length() % split_size == 0) 
+    {
+        start_substr = idr.start.substr(0, split_size);
+    }
     else 
     {
-        // start_substr = idr.start.substr(0, split_size + (idr.start.length() % split_size)); 
         start_substr = idr.start.substr(0, split_size + 1);
     }
-    // std::string start_substr { idr.start.substr(0, split_size) };
     
     std::string end_substr {};
-    if (idr.end.length() % split_size == 0) end_substr = idr.end.substr(0, split_size);
-    else 
+    if (idr.end.length() > idr.start.length())
     {
-        // end_substr = idr.end.substr(0, split_size + (idr.end.length() % split_size));
-        end_substr = idr.end.substr(0, split_size + 1);
+        end_substr = idr.end.substr(0, split_size + (idr.end.length() - idr.start.length()));
     }
-    // std::string end_substr { idr.end.substr(0, split_size) };
+    else
+    {
+        if  (idr.end.length() % 2 == 0)
+        {
+            end_substr = idr.end.substr(0, split_size);
+        }
+        else
+        {
+            end_substr = idr.end.substr(0, split_size + 1);
+        }
+    }
 
     std::cout << "start substr: " << start_substr << " end substr: " << end_substr << std::endl;
 
     unsigned long start_substr_num = std::stoul(start_substr);
     unsigned long end_substr_num = std::stoul(end_substr);
 
+    int num_loops = idr.start.length() / split_size;
+
     for (unsigned long subid = start_substr_num; subid <= end_substr_num; subid++)
     {
-        std::cout << "current subid: " << subid << ", ";
-        std::string current_id { createLoopedString( std::to_string(subid), idr.start.length() / std::to_string(subid).length() ) };
-        std::cout << "checking id: " << current_id << std::endl;
+        // std::cout << "current subid: " << subid << ", ";
+        std::string current_id { createLoopedString( std::to_string(subid), num_loops ) };
+        // std::cout << "checking id: " << current_id << std::endl;
         unsigned long current_id_num = std::stoul(current_id);
 
         if (current_id_num >= start_num && current_id_num <= end_num)
         {
+            std::cout << "found illegal id: " << current_id << std::endl;
             total += current_id_num;
         }
         
@@ -144,7 +156,6 @@ unsigned long getNInvalidIDTotalFromRange(const IDRange idr)
 
     int start_split_size_cap = (idr.start.length() / 2);
     int end_split_size_cap = (idr.end.length() / 2);
-    // if (idr.end.length() % 2 != 0) end_split_size_cap++;
 
     bool start_size_is_even { idr.start.length() % 2 == 0 };
     bool end_size_is_even { idr.end.length() % 2 == 0 };
